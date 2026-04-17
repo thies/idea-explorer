@@ -20,7 +20,7 @@ export default function Explorer({ user, profile }) {
   const [corpus, setCorpus]             = useState([])
   const [ideas, setIdeas]               = useState([])
   const [loading, setLoading]           = useState(true)
-  const [activeConditions, setActive]   = useState(new Set(['A']))
+  const [activeCondition, setActiveCondition] = useState('A')
   const [selectedIdea, setSelectedIdea] = useState(null)
 
   useEffect(() => {
@@ -35,7 +35,8 @@ export default function Explorer({ user, profile }) {
     })
   }, [])
 
-  const visibleIdeas = ideas.filter(idea => activeConditions.has(idea.condition))
+  const setActive = (cond) => { setActiveCondition(cond); setSelectedIdea(null) }
+  const visibleIdeas = ideas.filter(idea => idea.condition === activeCondition)
 
   if (loading) {
     return (
@@ -84,10 +85,11 @@ export default function Explorer({ user, profile }) {
         {/* Left: filter panel */}
         <aside className="w-60 flex-none border-r border-gray-100 overflow-y-auto">
           <FilterPanel
-            activeConditions={activeConditions}
+            activeCondition={activeCondition}
             setActive={setActive}
             ideas={ideas}
           />
+
         </aside>
 
         {/* Centre: scatter */}
