@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Users can read and write their own profile
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Feedback: authenticated users may create their own entry (keyed uid_ideaId).
+    // No updates or deletes — ratings are final.
+    match /feedback/{docId} {
+      allow read:   if request.auth != null;
+      allow create: if request.auth != null
+                    && request.resource.data.userId == request.auth.uid
+                    && docId == request.auth.uid + '_' + request.resource.data.ideaId;
+      allow update, delete: if false;
+    }
+  }
+}
