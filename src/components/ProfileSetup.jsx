@@ -64,7 +64,7 @@ export default function ProfileSetup({ user, onDone }) {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Have you done peer review before?
+              Have you reviewed real estate papers for academic journals before?
             </label>
             <div className="flex gap-4">
               {['yes', 'no'].map(v => (
