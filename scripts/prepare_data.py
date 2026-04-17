@@ -13,6 +13,7 @@ os.makedirs(OUT_DIR, exist_ok=True)
 # ── Corpus background ─────────────────────────────────────────────────────────
 corpus = pd.read_csv(f'{DATA_DIR}/combined_space.csv')
 corpus = corpus[corpus['is_editorial'] != True]
+corpus = corpus[corpus['umap_x'] < 15]   # exclude book-review outliers (same filter as R plots)
 corpus = corpus[['umap_x', 'umap_y', 'journal', 'title', 'year_int']].dropna(subset=['umap_x', 'umap_y'])
 corpus['umap_x'] = corpus['umap_x'].round(4)
 corpus['umap_y'] = corpus['umap_y'].round(4)

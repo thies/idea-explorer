@@ -4,25 +4,6 @@ import { db } from '../firebase'
 import { CONDITIONS } from './Explorer'
 import FeedbackForm from './FeedbackForm'
 
-function Score({ label, value }) {
-  if (value == null) return null
-  const pct = Math.round(value * 100)
-  return (
-    <div>
-      <div className="flex justify-between text-xs mb-0.5">
-        <span className="text-gray-500">{label}</span>
-        <span className="font-medium text-gray-700">{value.toFixed(2)}</span>
-      </div>
-      <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-        <div
-          className="h-full bg-blue-400 rounded-full transition-all"
-          style={{ width: `${pct}%` }}
-        />
-      </div>
-    </div>
-  )
-}
-
 function Field({ label, text }) {
   if (!text) return null
   return (
@@ -34,14 +15,16 @@ function Field({ label, text }) {
 }
 
 export default function IdeaPanel({ idea, user, onClose }) {
-  const [submitted, setSubmitted] = useState(false)
-  const [existing, setExisting]   = useState(null)
-  const [checking, setChecking]   = useState(true)
+  const [submitted, setSubmitted]   = useState(false)
+  const [existing, setExisting]     = useState(null)
+  const [checking, setChecking]     = useState(true)
+  const [showReview, setShowReview] = useState(false)
 
   const cond = CONDITIONS[idea.condition] || { label: idea.condition, color: '#999' }
 
-  // Check if user already rated this idea
+  // Reset state when idea changes
   useEffect(() => {
+    setShowReview(false)
     if (!user) { setChecking(false); return }
     setChecking(true)
     setSubmitted(false)
@@ -63,9 +46,12 @@ export default function IdeaPanel({ idea, user, onClose }) {
         <div className="flex items-center gap-2 flex-1 min-w-0">
           <span
             className="inline-block w-2.5 h-2.5 rounded-full flex-none mt-0.5"
-            style={{ backgroundColor: cond.color }}
+            style={{ backgroundColor: '#F21A00' }}
           />
           <span className="text-xs text-gray-500 truncate">{cond.label}</span>
+          {idea.assigned_label && (
+            <span className="text-xs text-gray-400 truncate">· {idea.assigned_label}</span>
+          )}
         </div>
         <button
           onClick={onClose}
@@ -80,21 +66,6 @@ export default function IdeaPanel({ idea, user, onClose }) {
 
       {/* Scrollable content */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {/* Scores bar */}
-        <div className="space-y-2">
-          <Score label="Atypicality" value={idea.atypicality_score} />
-          <Score label="Feasibility"  value={idea.feasibility_score} />
-          <Score label="Composite"    value={idea.composite_score} />
-        </div>
-
-        {/* Cluster */}
-        {idea.assigned_label && (
-          <div className="text-xs text-gray-400">
-            Cluster: <span className="text-gray-600">{idea.assigned_label}</span>
-          </div>
-        )}
-
-        <hr className="border-gray-100" />
 
         {/* Idea fields */}
         <dl className="space-y-4">
@@ -118,40 +89,42 @@ export default function IdeaPanel({ idea, user, onClose }) {
 
         <hr className="border-gray-100" />
 
-        {/* Feedback section */}
-        <div>
-          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
-            Your rating
-          </h3>
-          {!user ? (
-            <p className="text-xs text-gray-400">
-              <a
-                href="#"
-                onClick={e => { e.preventDefault(); import('../firebase').then(({ auth, googleProvider }) => { import('firebase/auth').then(({ signInWithPopup }) => signInWithPopup(auth, googleProvider)) }) }}
-                className="text-blue-500 hover:underline"
-              >
-                Sign in
-              </a>
-              {' '}to rate this idea.
-            </p>
-          ) : checking ? (
-            <p className="text-xs text-gray-400">Checking…</p>
-          ) : submitted ? (
-            <div className="space-y-1">
-              <p className="text-xs text-green-600 font-medium">Rating submitted.</p>
-              {existing && (
-                <div className="text-xs text-gray-500 space-y-0.5 mt-2">
-                  <p>Originality: {existing.originality}/5</p>
-                  <p>Feasibility: {existing.feasibility}/5</p>
-                  <p>Relevance/Impact: {existing.impact}/5</p>
-                  {existing.comments && <p>Comments: {existing.comments}</p>}
-                </div>
-              )}
-            </div>
-          ) : (
-            <FeedbackForm idea={idea} user={user} onSubmit={() => setSubmitted(true)} />
-          )}
-        </div>
+        {/* Review section */}
+        {!user ? (
+          <p className="text-xs text-gray-400">
+            <a
+              href="#"
+              onClick={e => { e.preventDefault(); import('../firebase').then(({ auth, googleProvider }) => { import('firebase/auth').then(({ signInWithPopup }) => signInWithPopup(auth, googleProvider)) }) }}
+              className="text-blue-500 hover:underline"
+            >
+              Sign in
+            </a>
+            {' '}to review this idea.
+          </p>
+        ) : checking ? (
+          <p className="text-xs text-gray-400">Checking…</p>
+        ) : submitted ? (
+          <div className="space-y-1">
+            <p className="text-xs text-green-600 font-medium">Review submitted.</p>
+            {existing && (
+              <div className="text-xs text-gray-500 space-y-0.5 mt-2">
+                <p>Originality: {existing.originality}/5</p>
+                <p>Feasibility: {existing.feasibility}/5</p>
+                <p>Relevance / impact: {existing.impact}/5</p>
+                {existing.comments && <p>Comments: {existing.comments}</p>}
+              </div>
+            )}
+          </div>
+        ) : showReview ? (
+          <FeedbackForm idea={idea} user={user} onSubmit={() => setSubmitted(true)} />
+        ) : (
+          <button
+            onClick={() => setShowReview(true)}
+            className="w-full py-2 border border-gray-200 rounded-lg text-xs text-gray-600 hover:bg-gray-50 transition"
+          >
+            Review this idea…
+          </button>
+        )}
       </div>
     </div>
   )
