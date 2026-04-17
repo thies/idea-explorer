@@ -23,7 +23,7 @@ export default function ScatterPlot({ corpus, ideas, selectedIdea, onSelect }) {
       text: others.map(d => d.title ? d.title.slice(0, 80) : ''),
       hovertemplate: '<b>%{text}</b><br>%{customdata}<extra></extra>',
       customdata: others.map(d => `${d.journal || ''} ${d.year_int || ''}`),
-      marker: { size: 3, color: '#cccccc', opacity: 0.45 },
+      marker: { size: 4.5, color: '#cccccc', opacity: 0.45 },
       showlegend: false,
     }
 
@@ -36,7 +36,7 @@ export default function ScatterPlot({ corpus, ideas, selectedIdea, onSelect }) {
       text: ree.map(d => d.title ? d.title.slice(0, 80) : ''),
       hovertemplate: '<b>%{text}</b><br>%{customdata}<extra></extra>',
       customdata: ree.map(d => `REE ${d.year_int || ''}`),
-      marker: { size: 3, color: ZISSOU2, opacity: 0.6 },
+      marker: { size: 4.5, color: ZISSOU2, opacity: 0.6 },
       showlegend: false,
     }
 
@@ -54,7 +54,7 @@ export default function ScatterPlot({ corpus, ideas, selectedIdea, onSelect }) {
       ),
       hovertemplate: '%{text}<extra></extra>',
       marker: {
-        size: 7,
+        size: 10.5,
         color: ZISSOU5,
         opacity: 0.75,
         line: { width: 0 },
