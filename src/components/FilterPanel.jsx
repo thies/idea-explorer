@@ -50,8 +50,9 @@ export default function FilterPanel({ activeConditions, setActive, ideas }) {
               <span
                 className="w-3 h-3 rounded-full flex-none border transition"
                 style={{
-                  backgroundColor: active ? color : 'transparent',
-                  borderColor: color,
+                  backgroundColor: active ? '#F21A00' : 'transparent',
+                  borderColor: '#F21A00',
+                  opacity: active ? 1 : 0.3,
                 }}
               />
               <input

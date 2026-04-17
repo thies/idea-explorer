@@ -20,7 +20,7 @@ export default function Explorer({ user, profile }) {
   const [corpus, setCorpus]             = useState([])
   const [ideas, setIdeas]               = useState([])
   const [loading, setLoading]           = useState(true)
-  const [activeConditions, setActive]   = useState(new Set(Object.keys(CONDITIONS)))
+  const [activeConditions, setActive]   = useState(new Set(['A']))
   const [selectedIdea, setSelectedIdea] = useState(null)
 
   useEffect(() => {
