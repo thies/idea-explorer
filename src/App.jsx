@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { onAuthStateChanged } from 'firebase/auth'
 import { doc, getDoc } from 'firebase/firestore'
 import { auth, db } from './firebase'
-import LoginPage from './components/LoginPage'
 import ProfileSetup from './components/ProfileSetup'
 import Explorer from './components/Explorer'
 
@@ -33,7 +32,9 @@ export default function App() {
     )
   }
 
-  if (!user) return <LoginPage />
-  if (!profile) return <ProfileSetup user={user} onDone={setProfile} />
+  // Show profile setup only when logged in but no profile yet
+  if (user && !profile) return <ProfileSetup user={user} onDone={setProfile} />
+
+  // Explorer is always visible; user/profile may be null for anonymous visitors
   return <Explorer user={user} profile={profile} />
 }

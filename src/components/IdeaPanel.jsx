@@ -42,6 +42,7 @@ export default function IdeaPanel({ idea, user, onClose }) {
 
   // Check if user already rated this idea
   useEffect(() => {
+    if (!user) { setChecking(false); return }
     setChecking(true)
     setSubmitted(false)
     setExisting(null)
@@ -53,7 +54,7 @@ export default function IdeaPanel({ idea, user, onClose }) {
       }
       setChecking(false)
     })
-  }, [idea.id, user.uid])
+  }, [idea.id, user?.uid])
 
   return (
     <div className="flex flex-col h-full">
@@ -122,7 +123,18 @@ export default function IdeaPanel({ idea, user, onClose }) {
           <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
             Your rating
           </h3>
-          {checking ? (
+          {!user ? (
+            <p className="text-xs text-gray-400">
+              <a
+                href="#"
+                onClick={e => { e.preventDefault(); import('../firebase').then(({ auth, googleProvider }) => { import('firebase/auth').then(({ signInWithPopup }) => signInWithPopup(auth, googleProvider)) }) }}
+                className="text-blue-500 hover:underline"
+              >
+                Sign in
+              </a>
+              {' '}to rate this idea.
+            </p>
+          ) : checking ? (
             <p className="text-xs text-gray-400">Checking…</p>
           ) : submitted ? (
             <div className="space-y-1">

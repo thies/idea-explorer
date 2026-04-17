@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { signOut } from 'firebase/auth'
-import { auth } from '../firebase'
+import { signOut, signInWithPopup } from 'firebase/auth'
+import { auth, googleProvider, githubProvider } from '../firebase'
 import ScatterPlot from './ScatterPlot'
 import FilterPanel from './FilterPanel'
 import IdeaPanel from './IdeaPanel'
@@ -56,13 +56,26 @@ export default function Explorer({ user, profile }) {
           </span>
         </div>
         <div className="flex items-center gap-3 text-xs text-gray-500">
-          <span>{user.email}</span>
-          <button
-            onClick={() => signOut(auth)}
-            className="text-gray-400 hover:text-gray-600 transition"
-          >
-            Sign out
-          </button>
+          {user ? (
+            <>
+              <span>{user.email}</span>
+              <button
+                onClick={() => signOut(auth)}
+                className="text-gray-400 hover:text-gray-600 transition"
+              >
+                Sign out
+              </button>
+            </>
+          ) : (
+            <div className="flex gap-2">
+              <button
+                onClick={() => signInWithPopup(auth, googleProvider)}
+                className="px-3 py-1 border border-gray-200 rounded text-gray-600 hover:bg-gray-50 transition"
+              >
+                Sign in to rate
+              </button>
+            </div>
+          )}
         </div>
       </header>
 
